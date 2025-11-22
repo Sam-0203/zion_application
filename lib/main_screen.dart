@@ -483,7 +483,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   int myCurrentIndex = 0;
 
-  // ❌ Chats Removed
   final List<Widget> _pages = const [BibleView(), SongsListView(), MyAccount()];
 
   late final List<AnimationController> _controllers;
@@ -493,7 +492,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    // ❌ Only 3 controllers now
     _controllers = List.generate(
       3,
       (_) => AnimationController(
@@ -590,7 +588,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: Colors.white.withOpacity(0.12)),
               ),
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(3, (i) {
@@ -610,9 +607,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 const SizedBox(height: 16),
                                 Icon(
                                   _navIcons[i],
-                                  color: isActive
-                                      ? Colors.white
-                                      : Colors.white60,
+                                  color:
+                                      isActive ? Colors.white : Colors.white60,
                                   size: isActive ? 32 : 28,
                                 ),
                                 const SizedBox(height: 6),
@@ -665,7 +661,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             ),
             child: Row(
               children: [
-                Text(
+                const Text(
                   'Zion App',
                   style: TextStyle(
                     color: Colors.white,
@@ -674,9 +670,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     letterSpacing: 1,
                   ),
                 ),
-
                 const Spacer(),
-
                 _iconButton(Icons.edit_note_rounded),
                 const SizedBox(width: 12),
                 GestureDetector(
@@ -711,7 +705,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             child: Container(
               height: MediaQuery.of(context).size.height * 0.40,
               padding: const EdgeInsets.all(18),
-
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.12),
                 borderRadius: const BorderRadius.vertical(
@@ -729,7 +722,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -28,7 +28,7 @@ class MainApp extends StatelessWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: MaterialApp(
         title: 'Zion App',
-        debugShowCheckedModeBanner: false,
+        // debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.dark,
         theme: ThemeData(
           fontFamily: "Poppins",
@@ -116,7 +116,9 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: deviceHeight * 0.2 + MediaQuery.of(context).padding.top),
+            SizedBox(
+                height:
+                    deviceHeight * 0.2 + MediaQuery.of(context).padding.top),
             ClipOval(
               child: Image.asset(
                 'assets/icons/App_Launcher.png',

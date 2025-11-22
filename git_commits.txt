@@ -1,0 +1,12 @@
+step 1 : git init
+step 2 : git remote add origin https://github.com/Sam-0203/zion_application.git
+step 3 : git add .
+step 4 : git commit -m "Initial upload"
+step 5 : git branch -M main
+step 6 : git push -u origin main --force
+
+✅ Remove Git Remote : git remote remove origin
+🔍 Check if removed : git remote -v
+✅ Add only one specific file : git add lib/main.dart
+✅ Push to GitHub : git push
+⭐ Add multiple specific files: git add lib/main.dart assets/images/logo.png pubspec.yaml

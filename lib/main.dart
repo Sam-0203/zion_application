@@ -1,146 +1,101 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'openinng_screen.dart';
+import 'package:flutter_app/app/getX/app_getX.dart';
+import 'package:flutter_app/app/route/app_routes.dart';
+import 'package:flutter_app/app/theme/app_colors.dart';
+import 'package:flutter_app/core/constants/texts.dart';
+import 'package:flutter_app/core/utils/user%20data%20storing/user_data_storing.dart';
+import 'package:flutter_app/services/app_audio_handler.dart';
 
-void main() {
+import 'app/route/app_routes_names.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge).then(
-    (_) {
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.black,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ));
-      runApp(const MainApp());
-    },
-  );
+  await initializeAudioHandler();
+  if (defaultTargetPlatform == TargetPlatform.iOS) {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
+  try {
+    await TokenStorage.clearUserSessionOnFreshInstall().timeout(
+      const Duration(seconds: 3),
+    );
+  } catch (error, stackTrace) {
+    // A native install-check failure must not prevent Flutter from starting.
+    debugPrint('Fresh-install session cleanup failed: $error');
+    debugPrintStack(stackTrace: stackTrace);
+  }
+  runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: MaterialApp(
-        title: 'Zion App',
-        // debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.dark,
-        theme: ThemeData(
-          fontFamily: "Poppins",
-          scaffoldBackgroundColor: Colors.black,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.black,
-            toolbarHeight: 75,
-            shape: Border(
-              bottom: BorderSide(
-                color: Colors.grey,
-                width: 0.7,
-              ),
-            ),
-          ),
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.black,
-            selectedItemColor: Colors.white60,
-            unselectedItemColor: Colors.grey[800],
-            showSelectedLabels: true,
-            showUnselectedLabels: false,
-            type: BottomNavigationBarType.fixed,
-          ),
-          textTheme: const TextTheme(
-            headlineLarge: TextStyle(
-                fontSize: 30,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w800,
-                color: Colors.white),
-            headlineMedium: TextStyle(
-                fontSize: 30,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w600,
-                color: Colors.white),
-            headlineSmall: TextStyle(
-                fontSize: 20,
-                fontFamily: "Poppins",
-                color: Colors.white,
-                fontWeight: FontWeight.w700),
-            bodySmall: TextStyle(
-                fontSize: 15,
-                color: Colors.white70,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w600),
-            bodyLarge: TextStyle(
-              color: Colors.white60,
-              fontFamily: "Poppins",
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-            ),
-          ),
-        ),
-        home: const SplashScreen(),
-      ),
-    );
-  }
+  State<MainApp> createState() => _MainAppState();
 }
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const OpeningScreen()),
-        );
-      }
-    });
-  }
+class _MainAppState extends State<MainApp> {
+  static final GlobalKey<NavigatorState> _navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
-    final deviceWidth = MediaQuery.of(context).size.width;
-    final deviceHeight = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-                height:
-                    deviceHeight * 0.2 + MediaQuery.of(context).padding.top),
-            ClipOval(
-              child: Image.asset(
-                'assets/icons/App_Launcher.png',
-                width: deviceWidth * 0.9,
-                height: deviceWidth * 0.9,
-                fit: BoxFit.contain,
-              ),
-            ),
-            const Spacer(),
-            Text(
-              'Welcome Back',
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Praise the Lord',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 50),
-          ],
+    return GetMaterialApp(
+      navigatorKey: _navigatorKey,
+      popGesture: false,
+      title: CustomStrings.applicationTitle,
+      debugShowCheckedModeBanner: false,
+      // Default theme
+      themeMode: ThemeMode.dark,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.dark,
+          primary: AppColors.primary,
+          secondary: AppColors.secondary,
+          surface: AppColors.surface,
+          onPrimary: AppColors.onPrimary,
+          onSecondary: AppColors.onSecondary,
+          onSurface: AppColors.onSurface,
         ),
-      ),
+        textTheme: GoogleFonts.zenOldMinchoTextTheme(
+          ThemeData(brightness: Brightness.dark).textTheme,
+        ),
+        appBarTheme: AppBarThemeData(
+          centerTitle: false,
+          elevation: 0,
+          toolbarHeight: 84,
+          backgroundColor: AppColors.black,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+        ),
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: AppColors.black,
+          contentTextStyle: TextStyle(color: AppColors.white),
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: AppColors.black,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
+      ), // Routes
+      initialBinding: AppBindings(),
+      getPages: AppRoutes.routes,
+      unknownRoute: AppRoutes.unknownRoute,
+      initialRoute: AppRoutesNames.wordOfGod,
     );
   }
 }
